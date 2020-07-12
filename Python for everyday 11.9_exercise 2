@@ -1,3 +1,36 @@
-Extract the number from each of the lines using a regular expression
-and the findall() method. Compute the average of the numbers and
-print out the average as an integer.
+c=list()
+count=0
+total=0
+import re
+fname=open('mbox.txt')
+for line in fname:
+    line=line.rstrip()
+    x=re.findall('^New Revision: [0-9]+', line)
+    if len(x)>0:
+        a=str(x)
+        b=a[16:21]
+        total=int(b)+total
+        c.append(int(b))
+        count=count+1
+    print(total/count)
+
+
+
+or
+
+
+c=list()
+count=0
+import re
+fname=open('mbox.txt')
+for line in fname:
+    line=line.rstrip()
+    x=re.findall('^New Revision: [0-9]+', line)
+    if len(x)>0:
+        a=str(x)
+        b=a[16:21]
+    
+        c.append(int(b))
+        count=count+1
+print(int(sum(c)/count))
+  
