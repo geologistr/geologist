@@ -49,5 +49,3 @@ for row in cur.execute(sqlstr):
 lis=dict_obj.items()
 print(sorted(lis,key=lambda x:x[1], reverse=True))
 cur.close()
-
-
