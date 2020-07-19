@@ -1,0 +1,53 @@
+import sqlite3
+lis=list()
+class my_dictionary(dict):  
+    def __init__(self):  
+        self = dict()  
+          
+    def add(self, key, value):  
+        self[key] = value  
+  
+dict_obj = my_dictionary()
+
+conn = sqlite3.connect('emaildb.sqlite')
+cur = conn.cursor()
+
+cur.execute('DROP TABLE IF EXISTS Counts')
+
+cur.execute('''
+CREATE TABLE Counts (email TEXT, count INTEGER)''')
+
+fname = input('Enter file name: ')
+
+fh = open(fname)
+for line in fh:
+    if not line.startswith('From: '): continue
+    pieces = line.split()
+    email = pieces[1]
+    cur.execute('SELECT count FROM Counts WHERE email = ? ', (email,))
+    row = cur.fetchone()
+    if row is None:
+        cur.execute('''INSERT INTO Counts (email, count)
+                VALUES (?, 1)''', (email,))
+    else:
+        cur.execute('UPDATE Counts SET count = count + 1 WHERE email = ?',
+                    (email,))
+    conn.commit()
+
+# https://www.sqlite.org/lang_select.html
+sqlstr = 'SELECT email, count FROM Counts ORDER BY count DESC'
+
+for row in cur.execute(sqlstr):
+    lis=row[0]
+    b=lis.split('@')
+    if b[1] in dict_obj:
+      
+        dict_obj.add(b[1],dict_obj[b[1]]+row[1])
+    else:
+        dict_obj.add(b[1],row[1])
+
+lis=dict_obj.items()
+print(sorted(lis,key=lambda x:x[1], reverse=True))
+cur.close()
+
+
